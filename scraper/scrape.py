@@ -84,3 +84,12 @@ with open(f"{furl}/src.txt", "a") as f:
 
 with open(f"{furl}/index.html", "w") as f:
     f.write(content)
+
+# TO-DO:
+#  - Add scraping debth (default 2 or 3?)so some links are also scraped along the index page.
+#  - When searching the 'soup' for links, add them to list, and replace them 
+#    with path in local dierectory instead of original website.
+#  - When all links replaced, create folder with all the href resources and src resources
+#    and keep href and src seperate.
+#  - When its a href, and a html page, save the page and perform the scraping on that one too,
+#    as long as it is less or equal to the depth of saving (not sure that makes sense).
