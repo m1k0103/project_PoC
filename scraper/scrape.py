@@ -3,12 +3,24 @@ import requests
 try:
     from bs4 import BeautifulSoup
 except:
-    #try harder
-    os.system("python3 -m pip install beautifulsoup4")
-    os.system("python3 -m pip install bs4")
-    os.system("easy_install beautifulsoup4")
-    os.system("easy_install bs4")
-    from bs4 import BeautifulSoup
+    #try again
+    try:
+        os.system("python3 -m pip install beautifulsoup4")
+        os.system("python3 -m pip install bs4")
+        from bs4 import BeautifulSoup
+    except:
+        os.system("python -m pip install beautifulsoup4")
+        os.system("python -m pip install bs4")
+        from bs4 import BeautifulSoup
+        #try yet again
+        try:
+            os.system("py -m pip install beautifulsoup4")
+            os.system("py -m pip install bs4")
+            from bs4 import BeautifulSoup
+        except:
+            os.system("easy_install beautifulsoup4")
+            os.system("easy_install bs4")
+            from bs4 import BeautifulSoup
 
 
 html_tags = ["html", "head", "body", "title", "h1", "h2", "h3", "h4", "h5", "h6", "p", "a", "img", "ul", "ol", "li", "div", "span",
@@ -20,6 +32,7 @@ html_tags = ["html", "head", "body", "title", "h1", "h2", "h3", "h4", "h5", "h6"
               "table","tbody","td","template","textarea","tfoot","th","thread","time","tr","track","u","var","video","wbr"]
 
 url = "https://harlington.org/"
+furl = url.split("//")[1]
 
 content = requests.get(url).text
 soup = BeautifulSoup(content,"html.parser")
@@ -57,8 +70,17 @@ hrefs = getAllHref(html_tags,soup)
 
 #writes all sources to folder named after url
 try:
-    os.mkdir(f"{url}_souces")
+    os.mkdir(f"{furl}")
 except:
     pass
 
+with open(f"{furl}/href.txt", "a") as f:
+    for i in range(len(hrefs)):
+        f.write(f"{hrefs[i]}\n" )
 
+with open(f"{furl}/src.txt", "a") as f:
+    for i in range(len(sources)):
+        f.write(f"{sources[i]}\n")
+
+with open(f"{furl}/index.html", "w") as f:
+    f.write(content)
