@@ -1,5 +1,6 @@
 import os
 import requests
+import datetime as dt
 try:
     from bs4 import BeautifulSoup
 except:
@@ -22,6 +23,7 @@ except:
             os.system("easy_install bs4")
             from bs4 import BeautifulSoup
 
+save_timestamp = f"{dt.date.today()}-{dt.datetime.now().hour}-{dt.datetime.now().minute}-{dt.datetime.now().second}"
 
 html_tags = ["html", "head", "body", "title", "h1", "h2", "h3", "h4", "h5", "h6", "p", "a", "img", "ul", "ol", "li", "div", "span",
               "abbr", "address","area", "article","aside","audio","base","bdi","bdo","blockquote","button","canvas","caption","cite",
@@ -31,8 +33,12 @@ html_tags = ["html", "head", "body", "title", "h1", "h2", "h3", "h4", "h5", "h6"
               "rp","rt", "ruby","s","samp","script","search","section","select","small","source","strong","style","sub","summary","sup","svg",
               "table","tbody","td","template","textarea","tfoot","th","thread","time","tr","track","u","var","video","wbr"]
 
-url = "https://harlington.org/"
-furl = url.split("//")[1]
+# if the website you're trying to archive has a / at the end, please remove it.
+# e.g: turn https://google.com/ into https://google.com
+url = "https://www.metoffice.gov.uk"
+
+#save folder path
+save_folder_p = url.split("//")[1]+ "-" + save_timestamp
 
 content = requests.get(url).text
 soup = BeautifulSoup(content,"html.parser")
@@ -70,19 +76,21 @@ hrefs = getAllHref(html_tags,soup)
 
 #writes all sources to folder named after url
 try:
-    os.mkdir(f"{furl}")
+    
+    os.mkdir(f"archived_websites/{save_folder_p}")
 except:
+    print("directory already exists")
     pass
 
-with open(f"{furl}/href.txt", "a") as f:
+with open(f"archived_websites/{save_folder_p}/href.txt", "a") as f:
     for i in range(len(hrefs)):
         f.write(f"{hrefs[i]}\n" )
 
-with open(f"{furl}/src.txt", "a") as f:
+with open(f"archived_websites/{save_folder_p}/src.txt", "a") as f:
     for i in range(len(sources)):
         f.write(f"{sources[i]}\n")
 
-with open(f"{furl}/index.html", "w") as f:
+with open(f"archived_websites/{save_folder_p}/index.html", "w") as f:
     f.write(content)
 
 # TO-DO:
