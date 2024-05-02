@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script>
+            async function submitPassword(){
+                const username = document.getElementById("username").value
+                const password = document.getElementById("password").value
+                const endpoint = "http://127.0.0.1:5000/login"
+                const roptions = {
+                    method:"POST",
+                    headers:{"Content-Type": "application/json"},
+                    body:JSON.stringify({"username":username,"password":password})
+                }
+                try{
+                    const response = await fetch(endpoint, roptions)
+                    const result = await response.json()
+                    console.log(JSON.stringify(result))
+
+                } catch (error){
+                    console.error(error)
+                }
+}
+        </script>
+    </head>
+    <body>
+        <h1>Test page</h1>
+        <div>
+            Username:<input id="username" type="text"> <br>
+            Password:<input id="password" type="password">
+            <button id="submit" onclick="submitPassword()">Submit</button>
+        </div>
+    </body>
+</html>
