@@ -35,7 +35,7 @@ html_tags = ["html", "head", "body", "title", "h1", "h2", "h3", "h4", "h5", "h6"
 
 # if the website you're trying to archive has a / at the end, please remove it.
 # e.g: turn https://google.com/ into https://google.com
-url = "https://www.metoffice.gov.uk"
+url = "https://google.com"
 
 #save folder path
 save_folder_p = url.split("//")[1]+ "-" + save_timestamp
@@ -76,7 +76,6 @@ hrefs = getAllHref(html_tags,soup)
 
 #writes all sources to folder named after url
 try:
-    
     os.mkdir(f"archived_websites/{save_folder_p}")
 except:
     print("directory already exists")
@@ -92,6 +91,24 @@ with open(f"archived_websites/{save_folder_p}/src.txt", "a") as f:
 
 with open(f"archived_websites/{save_folder_p}/index.html", "w") as f:
     f.write(content)
+
+save_path = f"archived_websites/{save_folder_p}/sources"
+
+try:
+    os.mkdir(f"archived_websites/{save_folder_p}/sources")
+except:
+    pass
+
+for i in range(len(sources)):
+    item = requests.get(sources[i])
+    if item.status_code == 200:
+        with open(f"{save_path}", "wb") as f:
+            f.write(item.content)
+            print(f"file {i} successfully downloaded")
+    else:
+        print(f"file {i} failed")
+
+
 
 # TO-DO:
 #  - Add scraping debth (default 2 or 3?)so some links are also scraped along the index page.
