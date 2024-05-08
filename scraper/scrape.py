@@ -1,6 +1,7 @@
 import os
 import requests
 import datetime as dt
+from multiprocessing import Pool
 try:
     from bs4 import BeautifulSoup
 except:
