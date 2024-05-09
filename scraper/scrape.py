@@ -24,8 +24,6 @@ except:
             os.system("easy_install bs4")
             from bs4 import BeautifulSoup
 
-save_timestamp = f"{dt.date.today()}-{dt.datetime.now().hour}-{dt.datetime.now().minute}-{dt.datetime.now().second}"
-
 html_tags = ["html", "head", "body", "title", "h1", "h2", "h3", "h4", "h5", "h6", "p", "a", "img", "ul", "ol", "li", "div", "span",
               "abbr", "address","area", "article","aside","audio","base","bdi","bdo","blockquote","button","canvas","caption","cite",
               "code","col","colgroup","data","datalist","dd","del","details","dfn","dialog","dl","dt","em","embed","fieldset","figcaption",
@@ -39,13 +37,14 @@ html_tags = ["html", "head", "body", "title", "h1", "h2", "h3", "h4", "h5", "h6"
 url = "https://google.com"
 
 #save folder path
+save_timestamp = f"{dt.date.today()}-{dt.datetime.now().hour}-{dt.datetime.now().minute}-{dt.datetime.now().second}"
 save_folder_p = url.split("//")[1]+ "-" + save_timestamp
 
 content = requests.get(url).text
 soup = BeautifulSoup(content,"html.parser")
 
 #gets all sources to links
-def getAllSrc(html_tags, soup):
+def getAllSrc(html_tags, soup, save_folder_p):
     all_src = []
     for i in range(len(html_tags)):
         all_of_element = soup.find_all(html_tags[i])
@@ -56,10 +55,12 @@ def getAllSrc(html_tags, soup):
             else:
                 link = requests.compat.urljoin(url,src)
                 all_src.append(link)
+                local_src_path = downloadSource(src, save_folder_p)
+                soup.replace(src,f"archived_websites/{save_folder_p}/{local_src_path}")
     return all_src
 
 #gets all hrefs
-def getAllHref(html_tags,soup):
+def getAllHref(html_tags,soup,save_folder_p):
     all_href = []
     for i in range(len(html_tags)):
         all_of_element = soup.find_all(html_tags[i])
@@ -70,10 +71,18 @@ def getAllHref(html_tags,soup):
             else:
                 link = requests.compat.urljoin(url,href)
                 all_href.append(link)
+                local_href_path = downloadSource(href, save_folder_p)
+                soup.replace(href,f"archived_websites/{save_folder_p}/{local_href_path}")
     return all_href
 
-sources = getAllSrc(html_tags,soup)
-hrefs = getAllHref(html_tags,soup)
+def downloadSource(file_to_save, save_folder_p):
+    r = requests.get(f"{url}{file_to_save}")
+    with open(f"{save_folder_p}/{file_to_save}", "wb") as f:
+        f.write(r.text)
+    return f"{save_folder_p}/{file_to_save}"
+
+sources = getAllSrc(html_tags,soup,save_folder_p)
+hrefs = getAllHref(html_tags,soup,save_folder_p)
 
 #writes all sources to folder named after url
 try:
@@ -96,7 +105,7 @@ with open(f"archived_websites/{save_folder_p}/index.html", "w") as f:
 save_path = f"archived_websites/{save_folder_p}/sources"
 
 try:
-    os.mkdir(f"archived_websites/{save_folder_p}/sources")
+    os.mkdir(save_path)
 except:
     pass
 
